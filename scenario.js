@@ -18,7 +18,7 @@ var scenario = function(name, description, requests) {
     self.requests = requests;
     
 
-/**
+    /**
     * Run the scenario
     * @private
     * @method run
@@ -30,6 +30,7 @@ var scenario = function(name, description, requests) {
         var scenario_result = {
             name : self.name,
             description : self.description,
+            success : true,
             responses   : []
         };
         for(var index = 0; index < self.requests.length; index++) {
@@ -38,6 +39,7 @@ var scenario = function(name, description, requests) {
                 scenario_result.responses.push({ url : self.requests[index], success: true, request_time : get_elapsed_time(time_before_req) });
             }).fail( function(response,body) {
                 scenario_result.responses.push({ url : self.requests[index], success: false, request_time : get_elapsed_time(time_before_req) });
+                scenario_result.success = false;
             });
         }
     }
@@ -46,7 +48,7 @@ var scenario = function(name, description, requests) {
 
 function apply_client_specifics(request_dto, client) {
     for(var h_index =0; h_index < client.headers.length; h.index++) {
-        
+        if(client.headers[h_index]
     }
 }
 
