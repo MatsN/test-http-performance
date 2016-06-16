@@ -15,16 +15,11 @@ describe('request_dto', function () {
             var headers = {};
             var json = false;
             var request_dto_obj = require('../request_dto.js')(method,domain,path,body,headers,json);
-            assert.equal(true,request_dto_obj.method !== undefined);
             assert.equal(request_dto_obj.method, method);
-            assert.equal(true,request_dto_obj.domain  !== undefined);
-            assert.equal(request_dto_obj.domain, domain);            assert.equal(true,request_dto_obj.path   !== undefined);
+            assert.equal(request_dto_obj.domain, domain);            
             assert.equal(request_dto_obj.path, path);
-            assert.equal(true,request_dto_obj.body  !== undefined);
             assert.equal(request_dto_obj.body, body);
-            assert.equal(true,request_dto_obj.headers !== undefined);
             assert.equal(request_dto_obj.headers, headers);
-            assert.equal(true,request_dto_obj.json !== undefined);
             assert.equal(request_dto_obj.json, json);
             done();
         });
