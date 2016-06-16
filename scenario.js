@@ -1,6 +1,7 @@
 
 var Q = require('q');
 var request = require('request');
+var util = require('util');
 
 /**
 * Constructor for scenario
@@ -18,6 +19,7 @@ var scenario = function(name, description, requests) {
     self.requests = requests;
     
 
+    var util = require('util');
     /**
     * Run the scenario
     * @private
@@ -27,6 +29,7 @@ var scenario = function(name, description, requests) {
     * @return {Object} description
     */
     self.run = function(client, cb) {
+        var responses_done = 0;
         var scenario_result = {
             name : self.name,
             description : self.description,
@@ -34,21 +37,30 @@ var scenario = function(name, description, requests) {
             responses   : []
         };
         for(var index = 0; index < self.requests.length; index++) {
-            var time_before_req = new Date().getTime();
-            do_request(self.requests[index]).then( function(response,body) {
+            var time_before_req = new Date();
+            do_request(self.requests[index]).then( function(result) {
                 scenario_result.responses.push({ url : self.requests[index], success: true, request_time : get_elapsed_time(time_before_req) });
-            }).fail( function(response,body) {
+                responses_done++;
+                if(responses_done===self.requests.length){
+                    cb(scenario_result);
+                }
+            }).fail( function(result) {
                 scenario_result.responses.push({ url : self.requests[index], success: false, request_time : get_elapsed_time(time_before_req) });
                 scenario_result.success = false;
-            });
+                responses_done++;
+                if(responses_done===self.requests.length){
+                    cb(scenario_result);
+                }
+            }).catch(function (error) {
+                console.log(util.inspect(error));
+            }).done();
         }
     }
-    
 }
 
 function apply_client_specifics(request_dto, client) {
     for(var h_index =0; h_index < client.headers.length; h.index++) {
-        if(client.headers[h_index]
+        //if(client.headers[h_index]
     }
 }
 
@@ -65,7 +77,7 @@ function get_elapsed_time(then) {
 */
 function do_request(request_dto) {
     var deferred = Q.defer();
-    request(request_dto, function(error, response, body) {
+    request(request_dto.get_request(), function(error, response, body) {
         if (error) {
             deferred.reject(error);
         } else {
