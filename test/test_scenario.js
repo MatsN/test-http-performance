@@ -47,7 +47,7 @@ describe('scenario', function () {
                 request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false)
             ];
             var scenario_obj = scenario(name, description, requests);
-            var client1 = client('test-client1',{ 'testheader' : 'blaj'});
+            var client1 = client('test-client1',{ 'testheader' : 'blaj'},1,1000);
             scenario_obj.run(client1, function(scenario_result) {
                assert.equal(true,scenario_result instanceof Object);
                done();
@@ -62,7 +62,7 @@ describe('scenario', function () {
                 request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
             ];
             var scenario_obj = scenario(name, description, requests);
-            var client1 = client('test-client1',{ 'testheader' : 'blaj'});
+            var client1 = client('test-client1',{ 'testheader' : 'blaj'},1,1000);
             var modded_request = scenario_obj.apply_client_specifics(requests[0],client1);
             assert.equal(modded_request.headers['testheader'], client1.headers['testheader']);
             done();
