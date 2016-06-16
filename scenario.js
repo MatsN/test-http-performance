@@ -29,32 +29,44 @@ var scenario = function(name, description, requests) {
     * @return {Object} description
     */
     self.run = function(client, cb) {
-        var responses_done = 0;
-        var scenario_result = {
-            name : self.name,
-            description : self.description,
-            success : true,
-            responses   : []
-        };
-        for(var index = 0; index < self.requests.length; index++) {
-            var time_before_req = new Date();
-            self.apply_client_specifics(self.requests[index],client);
-            do_request(self.requests[index]).then( function(result) {
-                scenario_result.responses.push({ url : self.requests[index], success: true, request_time : get_elapsed_time(time_before_req) });
-                responses_done++;
-                if(responses_done === self.requests.length) {
-                    cb(scenario_result);
-                }
-            }).fail( function(result) {
-                scenario_result.responses.push({ url : self.requests[index], success: false, request_time : get_elapsed_time(time_before_req) });
-                scenario_result.success = false;
-                responses_done++;
-                if(responses_done===self.requests.length){
-                    cb(scenario_result);
-                }
-            }).catch(function (error) {
-                console.log(util.inspect(error));
-            }).done();
+        var scenario_results = [];
+        var attempts_done = 0;
+        for(var attempts = 0; attempts < client.times_to_run; attempts++){
+            var responses_done = 0;
+            var scenario_result = {
+                name : self.name,
+                description : self.description,
+                success : true,
+                responses   : []
+            };
+            for(var index = 0; index < self.requests.length; index++) {
+                var time_before_req = new Date();
+                self.apply_client_specifics(self.requests[index],client);
+                do_request(self.requests[index]).then( function(result) {
+                    scenario_result.responses.push({ url : self.requests[index], success: true, request_time : get_elapsed_time(time_before_req)});
+                    responses_done++;
+                    if(responses_done === self.requests.length) {
+                        scenario_results.push(scenario_result);
+                        attempts_done++;
+                    }
+                    if(attempts_done === client.times_to_run) {
+                        cb(scenario_results);
+                    }
+                }).fail( function(result) {
+                    scenario_result.responses.push({ url : self.requests[index], success: false, request_time : get_elapsed_time(time_before_req) });
+                    scenario_result.success = false;
+                    responses_done++;
+                    if(responses_done === self.requests.length) { 
+                        scenario_results.push(scenario_result);
+                        attempts_done++;
+                    }
+                    if(attempts_done === client.times_to_run) {
+                        cb(scenario_results);
+                    }
+                }).catch(function (error) {
+                    console.log(util.inspect(error));
+                }).done();
+            }
         }
     }
     self.apply_client_specifics = function(request_dto, client) {
