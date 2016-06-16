@@ -1,6 +1,7 @@
 var assert = require('assert');
 var request_dto = require('../request_dto.js');
 var scenario = require('../scenario.js');
+var client = require('../client.js');
 //testserver to run scenarios agains.
 var testserver = require('./mock/testserver.js');
 //change this to a free port if you have something running on 8081!
@@ -46,11 +47,25 @@ describe('scenario', function () {
                 request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false)
             ];
             var scenario_obj = scenario(name, description, requests);
-            var client = { headers : [] };
-            scenario_obj.run(client, function(scenario_result) {
+            var client1 = client('test-client1',{ 'testheader' : 'blaj'});
+            scenario_obj.run(client1, function(scenario_result) {
                assert.equal(true,scenario_result instanceof Object);
                done();
             });
+        });
+    });
+    describe('apply_client_headers', function () {
+        it('should return a request object modified by the client header settings',function(done) {
+            var name ='test-senario';
+            var description = 'test all requests';
+            var requests = [
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+            ];
+            var scenario_obj = scenario(name, description, requests);
+            var client1 = client('test-client1',{ 'testheader' : 'blaj'});
+            var modded_request = scenario_obj.apply_client_specifics(requests[0],client1);
+            assert.equal(modded_request.headers['testheader'], client1.headers['testheader']);
+            done();
         });
     });
 });
