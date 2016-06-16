@@ -38,10 +38,11 @@ var scenario = function(name, description, requests) {
         };
         for(var index = 0; index < self.requests.length; index++) {
             var time_before_req = new Date();
+            self.apply_client_specifics(self.requests[index],client);
             do_request(self.requests[index]).then( function(result) {
                 scenario_result.responses.push({ url : self.requests[index], success: true, request_time : get_elapsed_time(time_before_req) });
                 responses_done++;
-                if(responses_done===self.requests.length){
+                if(responses_done === self.requests.length) {
                     cb(scenario_result);
                 }
             }).fail( function(result) {
@@ -56,13 +57,17 @@ var scenario = function(name, description, requests) {
             }).done();
         }
     }
-}
-
-function apply_client_specifics(request_dto, client) {
-    for(var h_index =0; h_index < client.headers.length; h.index++) {
-        //if(client.headers[h_index]
+    self.apply_client_specifics = function(request_dto, client) {
+        for(var propertyName in client.headers) {
+            if(request_dto.headers[propertyName] === undefined) {
+                request_dto.headers[propertyName] = client.headers[propertyName];
+            }
+        }
+        return request_dto;
     }
 }
+
+
 
 function get_elapsed_time(then) {
     return new Date().getTime() - then.getTime();
