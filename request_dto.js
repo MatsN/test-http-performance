@@ -1,5 +1,5 @@
 var request_dto = function(method, domain, path, body, headers, json) {
-    var self= this;
+    var self = this;
     this.method = method;
     this.domain = domain;
     this.path = path;
