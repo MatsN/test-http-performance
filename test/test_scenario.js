@@ -39,30 +39,50 @@ describe('scenario', function () {
         });
     });
     describe('run', function () {
-        it('should return a scenario_result object',function(done) {
-            var name ='test-senario';
+        it('should return a list of scenario_result object', function(done) {
+            var name = 'test-senario';
             var description = 'test all requests';
             var requests = [
                 request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
                 request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false)
             ];
             var scenario_obj = scenario(name, description, requests);
-            var client1 = client('test-client1',{ 'testheader' : 'blaj'},1,1000);
+            var client1 = client('test-client1',{ 'testheader' : 'header_value'},1,1000);
             scenario_obj.run(client1, function(scenario_result) {
-               assert.equal(true,scenario_result instanceof Object);
+               assert.equal(true , scenario_result instanceof Array);
                done();
+            });
+        });
+        it('scenario_result object should contain name, description, success = true, responses', function(done) {
+            var name = 'test-senario';
+            var description = 'test all requests';
+            var requests = [
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false)
+            ];
+            var scenario_obj = scenario(name, description, requests);
+            var client1 = client('test-client1',{ 'testheader' : 'header_value'}, 1, 1000);
+            scenario_obj.run(client1, function(scenario_results) {
+                console.info('hej');
+                scenario_results.forEach( function(scenario_result) {
+                   assert.equal(scenario_result.name , name);
+                   assert.equal(scenario_result.description , description);
+                   assert.equal(scenario_result.success , false);
+                   assert.equal(true, scenario_result.responses instanceof Array);
+                });
+                done();
             });
         });
     });
     describe('apply_client_headers', function () {
         it('should return a request object modified by the client header settings',function(done) {
-            var name ='test-senario';
+            var name = 'test-senario';
             var description = 'test all requests';
             var requests = [
                 request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
             ];
             var scenario_obj = scenario(name, description, requests);
-            var client1 = client('test-client1',{ 'testheader' : 'blaj'},1,1000);
+            var client1 = client('test-client1',{ 'testheader' : 'blaj'}, 1, 1000);
             var modded_request = scenario_obj.apply_client_specifics(requests[0],client1);
             assert.equal(modded_request.headers['testheader'], client1.headers['testheader']);
             done();
