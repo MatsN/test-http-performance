@@ -39,6 +39,57 @@ describe('scenario', function () {
         });
     });
     describe('run', function () {
+        it('scenario_result object should contain name, description, success = true, responses', function(done) {
+            var name = 'test-senario';
+            var description = 'test all requests';
+            var requests = [
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false)
+            ];
+            var scenario_obj = scenario(name, description, requests);
+            var client1 = client('test-client1',{ 'testheader' : 'header_value'}, 1, 1000);
+            scenario_obj.run(client1, function(scenario_results) {
+                for(var index = 0; index < scenario_results.length; index++) {
+                   assert.equal(true, scenario_results[index].name === name);
+                   assert.equal(scenario_results[index].description , description);
+                   assert.equal(scenario_results[index].success , true);
+                   assert.equal(true, scenario_results[index].responses instanceof Array);
+                }
+                done();
+            });
+        });
         it('should return a list of scenario_result object', function(done) {
             var name = 'test-senario';
             var description = 'test all requests';
@@ -47,32 +98,13 @@ describe('scenario', function () {
                 request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false)
             ];
             var scenario_obj = scenario(name, description, requests);
-            var client1 = client('test-client1',{ 'testheader' : 'header_value'},1,1000);
-            scenario_obj.run(client1, function(scenario_result) {
-               assert.equal(true , scenario_result instanceof Array);
+            var client1 = client('test-client1',{ 'testheader' : 'header_value'},1, 1000);
+            scenario_obj.run(client1, function(scenario_results) {
+               assert.equal(true , scenario_results instanceof Array);
                done();
             });
         });
-        it('scenario_result object should contain name, description, success = true, responses', function(done) {
-            var name = 'test-senario';
-            var description = 'test all requests';
-            var requests = [
-                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
-                request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false)
-            ];
-            var scenario_obj = scenario(name, description, requests);
-            var client1 = client('test-client1',{ 'testheader' : 'header_value'}, 1, 1000);
-            scenario_obj.run(client1, function(scenario_results) {
-                console.info('hej');
-                scenario_results.forEach( function(scenario_result) {
-                   assert.equal(scenario_result.name , name);
-                   assert.equal(scenario_result.description , description);
-                   assert.equal(scenario_result.success , false);
-                   assert.equal(true, scenario_result.responses instanceof Array);
-                });
-                done();
-            });
-        });
+
     });
     describe('apply_client_headers', function () {
         it('should return a request object modified by the client header settings',function(done) {

@@ -31,7 +31,8 @@ var scenario = function(name, description, requests) {
     self.run = function(client, cb) {
         var scenario_results = [];
         var attempts_done = 0;
-        for(var attempts = 0; attempts < client.times_to_run; attempts++){
+        // for(var attempts = 0; attempts < client.times_to_run; attempts++){
+        for(var attempts = 0; attempts < 1; attempts++) {
             var responses_done = 0;
             var scenario_result = {
                 name : self.name,
@@ -40,10 +41,23 @@ var scenario = function(name, description, requests) {
                 responses   : []
             };
             for(var index = 0; index < self.requests.length; index++) {
-                var time_before_req = new Date();
+                self.requests[index].index = index;
+                self.requests[index].start_time = new Date();
                 self.apply_client_specifics(self.requests[index],client);
                 do_request(self.requests[index]).then( function(result) {
-                    scenario_result.responses.push({ url : self.requests[index], success: true, request_time : get_elapsed_time(time_before_req)});
+                    scenario_result.responses.push({ url : result.request.url, success: true, request_time : get_elapsed_time(result.request.start_time)});
+                    responses_done++;
+                    if(responses_done === self.requests.length) {
+                        scenario_results.push(scenario_result);
+                        attempts_done++;
+                    }
+                    if(attempts_done === client.times_to_run) {
+                        //attempts_done=0;
+                        cb(scenario_results);
+                    }
+                }).fail( function(error) {
+                    scenario_result.responses.push({ url : error.request.url, success: false, request_time : get_elapsed_time(time_before_req) });
+                    scenario_result.success = false;
                     responses_done++;
                     if(responses_done === self.requests.length) {
                         scenario_results.push(scenario_result);
@@ -52,20 +66,7 @@ var scenario = function(name, description, requests) {
                     if(attempts_done === client.times_to_run) {
                         cb(scenario_results);
                     }
-                }).fail( function(result) {
-                    scenario_result.responses.push({ url : self.requests[index], success: false, request_time : get_elapsed_time(time_before_req) });
-                    scenario_result.success = false;
-                    responses_done++;
-                    if(responses_done === self.requests.length) { 
-                        scenario_results.push(scenario_result);
-                        attempts_done++;
-                    }
-                    if(attempts_done === client.times_to_run) {
-                        cb(scenario_results);
-                    }
-                }).catch(function (error) {
-                    console.log(util.inspect(error));
-                }).done();
+                });
             }
         }
     }
@@ -107,15 +108,18 @@ function do_request(request_dto) {
             }
             if (response.statusCode === 204) {
                 deferred.resolve({
+                    request: request_dto,
                     response: response
                 });
             } else if (response.statusCode >= 200 && response.statusCode <= 299) {
                 deferred.resolve({
+                    request: request_dto,
                     response: response,
                     body: body
                 });
             } else {
                 deferred.reject({
+                    request: request_dto,
                     response: response,
                     body: body
                 });
