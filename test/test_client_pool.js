@@ -7,7 +7,7 @@ var util = require('util');
 describe('client_pool', function () {
     describe('Constructor', function () {
         it('should return a object',function(done) {
-            var test_client_pool = client_pool('test_client_pool',[client('test-client1',{ 'testheader' : 'header_value'}, 1, 1000)]);
+            var test_client_pool = client_pool('test_client_pool',[client('test-client1',[{ 'testheader' : 'header_value'}], 1, 1000)]);
             assert.equal(true,test_client_pool instanceof Object);
             done();
         });
@@ -28,7 +28,7 @@ describe('client_pool', function () {
             done();
         });
     });
-    describe('Constructor', function () {
+    describe('getNextClient', function () {
         it('should return a client', function(done){
             var client_name = 'testclient';
             var pool_name = 'test_client_pool';

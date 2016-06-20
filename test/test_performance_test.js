@@ -15,8 +15,8 @@ var client_pool_obj = client_pool('test_pool',[client('test_client1',[{ 'testhea
 var name = 'test-senario';
 var describe_scenario = 'test all requests';
 var requests = [
-    request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false),
-    request_dto('GET','http://localhost:'+some_free_port,'/',{},{},false)
+    request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
+    request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false)
 ];
 var scenario_obj = scenario(name, describe_scenario, requests);
 var scenarios = [scenario_obj];
