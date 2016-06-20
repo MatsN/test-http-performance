@@ -1,11 +1,22 @@
 var scenario = require('./scenario.js');
 var util = require('util');
 var common = require('./common.js');
+var c_pool = require('./client_pool.js');
 
 var performance_test = function(describe, client_pool, scenarios) {
     var self = this;
-    self.describe = describe;
-    self.client_pool = client_pool;
+    if(describe === undefined) {
+        self.describe = 'performance_test';
+    }
+    else {
+        self.describe = describe;
+    }
+    if(client_pool === undefined){
+        self.client_pool = c_pool();//Create a default pool
+    }
+    else{
+        self.client_pool = client_pool;
+    }
     self.scenarios = scenarios;
     
     self.run = function(reqirements, cb) {

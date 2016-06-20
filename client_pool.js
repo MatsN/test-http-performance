@@ -1,14 +1,31 @@
 var util = require('util');
+var client = require('./client.js');
 var client_pool = function(name, clients, random) {
     var self = this;
-    self.name = name;
-    self.clients = clients;
+    if(name === undefined) {
+        self.name = 'default_client_pool';
+    }
+    else {
+        self.name = name;
+    }
+    if(clients == undefined) {
+        self.clients = [client()];//1 client with default settings 
+    }
+    else {
+        self.clients = clients;
+    }
+    if(random === undefined) {
+         self.random = false;
+    }
+    else {
+         self.random = random;
+    }
     self.counter = 0;
-    self.random = random;
+   
     self.getNextClient = function() {
         var returning_client = undefined;
         if(self.random) {
-            //TODO
+            //TODO implement ramdom selection of client
         }
         else {
             if(self.counter < self.clients.length) {

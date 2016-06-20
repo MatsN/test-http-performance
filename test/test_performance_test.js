@@ -11,7 +11,7 @@ var some_free_port = 8082;
 
 //testdata
 var describe_perf = 'Performancetesting testserver';
-var client_pool_obj = client_pool('test_pool',[client('test_client1',[{ 'testheader': 'abc'}],500,10)],false);
+var client_pool_obj = client_pool('test_pool',[client('test_client1',[{ 'testheader': 'abc'}],500,10)], false);
 var name = 'test-senario';
 var describe_scenario = 'test all requests';
 var requests = [
