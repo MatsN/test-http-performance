@@ -4,6 +4,7 @@
   "description": "Node.js mocha friendly http performance scenario test API",
   "main": "",
   "dependencies": {
+    "limiter": "^1.1.0",
     "q": "^1.4.1",
     "request": "^2.72.0"
   },

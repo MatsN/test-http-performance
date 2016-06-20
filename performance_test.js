@@ -1,5 +1,6 @@
 var scenario = require('./scenario.js');
 var util = require('util');
+var common = require('./common.js');
 
 var performance_test = function(describe, client_pool, scenarios) {
     var self = this;
@@ -21,12 +22,13 @@ var performance_test = function(describe, client_pool, scenarios) {
                 success : true,
                 results : []
             }
+            var scenario_start_time = new Date();
             self.scenarios[scenario_index].run(client_pool.getNextClient(), function(scenario_results) {
                 for(var i = 0; i < scenario_results.length; i++) {
                     //extract all the response times
                     var request_times = get_scenario_request_times(scenario_results[i]);                                                        
                     //count total for the requests (this will not be real percived time since requests have been running asyncronusly)
-                    var total_time = get_total_time_msec(request_times);
+                    //var total_time = get_total_time_msec(request_times);
                     //calculate mean/average time
                     var mean_time = get_mean_time_msec(request_times);
                     //calculate median
@@ -34,8 +36,6 @@ var performance_test = function(describe, client_pool, scenarios) {
                     //find the max time
                     var max_time = get_max_time_msec(request_times);
                     var test_results = {
-                        total_time: total_time,
-                        total_time_ok: (total_time < reqirements.max_total_time_msec),
                         mean_time: mean_time,
                         mean_time_ok: (mean_time < reqirements.max_mean_time_msec),
                         median_time: median_time,
@@ -71,7 +71,7 @@ function get_total_time_msec(request_times) {
 }
 
 function get_mean_time_msec(request_times) {
-    return get_total_time_msec(request_times) - request_times.length;
+    return get_total_time_msec(request_times) / request_times.length;
 }
     
 function get_median_time_msec(request_times) {

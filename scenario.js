@@ -2,7 +2,7 @@
 var Q = require('q');
 var request = require('request');
 var util = require('util');
-
+var RateLimiter = require('limiter').RateLimiter;
 /**
 * Constructor for scenario
 * @private
@@ -29,10 +29,11 @@ var scenario = function(name, description, requests) {
     * @return {Object} description
     */
     self.run = function(client, cb) {
+        var limiter = new RateLimiter(1, client.msec_between_requests);
         var scenario_results = [];
         var attempts_done = 0;
-        // for(var attempts = 0; attempts < client.times_to_run; attempts++){
-        for(var attempts = 0; attempts < 1; attempts++) {
+        for(var attempts = 0; attempts < client.times_to_run; attempts++) {
+        //for(var attempts = 0; attempts < 1; attempts++) {
             var responses_done = 0;
             var scenario_result = {
                 name : self.name,
@@ -42,21 +43,25 @@ var scenario = function(name, description, requests) {
             };
             for(var index = 0; index < self.requests.length; index++) {
                 self.requests[index].index = index;
-                self.requests[index].start_time = new Date();
                 self.apply_client_specifics(self.requests[index],client);
-                do_request(self.requests[index]).then( function(result) {
+            }
+            limiter.removeTokens(1, function() {
+                
+                do_request(self.requests.pop()).then( function(result) {
                     scenario_result.responses.push({ url : result.request.url, success: true, request_time : get_elapsed_time(result.request.start_time)});
+                    self.requests.unshift(result.request);
                     responses_done++;
                     if(responses_done === self.requests.length) {
+                        responses_done = 0;
                         scenario_results.push(scenario_result);
                         attempts_done++;
                     }
                     if(attempts_done === client.times_to_run) {
-                        //attempts_done=0;
+                        attempts_done = 0;
                         cb(scenario_results);
                     }
                 }).fail( function(error) {
-                    scenario_result.responses.push({ url : error.request.url, success: false, request_time : get_elapsed_time(time_before_req) });
+                    scenario_result.responses.push({ url : error.request.url, success: false, request_time : get_elapsed_time(result.request.start_time) });
                     scenario_result.success = false;
                     responses_done++;
                     if(responses_done === self.requests.length) {
@@ -65,9 +70,10 @@ var scenario = function(name, description, requests) {
                     }
                     if(attempts_done === client.times_to_run) {
                         cb(scenario_results);
+                        return;
                     }
                 });
-            }
+            });
         }
     }
     self.apply_client_specifics = function(request_dto, client) {
@@ -79,8 +85,6 @@ var scenario = function(name, description, requests) {
         return request_dto;
     }
 }
-
-
 
 function get_elapsed_time(then) {
     return new Date().getTime() - then.getTime();
@@ -94,6 +98,8 @@ function get_elapsed_time(then) {
 * @return {Object} description
 */
 function do_request(request_dto) {
+    console.info(util.inspect(request_dto));
+    request_dto.start_time = new Date();
     var deferred = Q.defer();
     request(request_dto.get_request(), function(error, response, body) {
         if (error) {
