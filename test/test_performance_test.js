@@ -11,7 +11,7 @@ var some_free_port = 8082;
 
 //testdata
 var describe_perf = 'Performancetesting testserver';
-var client_pool_obj = client_pool('test_pool',[client('test_client1',[{ 'testheader': 'abc'}],8,100)],false);
+var client_pool_obj = client_pool('test_pool',[client('test_client1',[{ 'testheader': 'abc'}],500,10)],false);
 var name = 'test-senario';
 var describe_scenario = 'test all requests';
 var requests = [
@@ -22,8 +22,8 @@ var scenario_obj = scenario(name, describe_scenario, requests);
 var scenarios = [scenario_obj];
 
 var requirements = { 
-    max_mean_time_msec : 80,
-    max_median_time_msec : 80,
+    max_mean_time_msec : 100,
+    max_median_time_msec : 100,
     max_time_msec : 150 
 };
 
@@ -34,10 +34,13 @@ testserver.start(some_free_port);
 
 //create a performance_test to use below
 var perf_test = performance_test(describe_perf, client_pool_obj, scenarios);
+var performance_test_result=undefined;
+
+
 
 //Run the test so whe can then do tests on the result
-perf_test.run(requirements, function(performance_test_result) {
-    describe('performance_test', function () {
+
+describe('performance_test', function () {
         describe('Constructor', function () {
             it('should return a object', function(done) {
                 assert.equal(true,perf_test instanceof Object);
@@ -51,12 +54,18 @@ perf_test.run(requirements, function(performance_test_result) {
             });
         });
         describe('run actual performance test', function() {
+            it('run and wait for result',function(done){
+                perf_test.run(requirements, function(test_result) {
+                    performance_test_result = test_result;
+                    done();
+                });
+            });
             it('shuld return a performance_test_result', function(done){
                 assert.equal(true, performance_test_result instanceof Object);
                 assert.equal(true, performance_test_result.describe === describe_perf);
                 done();
             });
-            it('the times of the scenario should poass the requirements', function(done) {
+            it('the times of the scenario should pass the requirements', function(done) {
                 performance_test_result.scenarios.forEach( function(scenario) {
                     try {
                         scenario.results.forEach( function(result) {
@@ -72,6 +81,5 @@ perf_test.run(requirements, function(performance_test_result) {
                 });
             });
         });
-    });
 });
 //testserver.stop();
