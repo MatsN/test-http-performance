@@ -11,11 +11,19 @@ Show what the library does as concisely as possible, developers should be able t
 
 ## Motivation
 
-A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
+test-http-performance was created because there were no modules for node that could be easily configured to do more advanced combinations of requests.
+The idea is to provide a tool that can setup multiple simulated clients to run secarios consisting of a combination of request that will simulate intended use during a performance test.
+The test will result in some test data being gathered, the data can then be tested against a set of requirements. 
+
 
 ## Installation
 
-Provide code examples and explanations of how to get the project.
+For now clone it: 
+https://github.com/MatsN/test-http-performance/archive/master.zip
+or download zip:
+https://github.com/MatsN/test-http-performance.git
+
+Available npm soon!
 
 ## API Reference
 
@@ -23,7 +31,11 @@ Depending on the size of the project, if it is small and simple enough the refer
 
 ## Tests
 
-Describe and show how to run the tests with code examples.
+```javascript
+
+npm test
+
+```
 
 ## Contributors
 
@@ -31,4 +43,4 @@ Let people know how they can dive into the project, include important links to t
 
 ## License
 
-A short snippet describing the license (MIT, Apache, etc.)
+MIT
