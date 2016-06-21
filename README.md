@@ -54,8 +54,6 @@ performance_test.run(
 );
 
 ```
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
-
 ## Motivation
 
 test-http-performance was created because there were no modules for node that could be easily configured to do more advanced combinations of requests.
