@@ -3,7 +3,7 @@ var util = require('util');
 var common = require('./common.js');
 var c_pool = require('./client_pool.js');
 
-var performance_test = function(describe, client_pool, scenarios) {
+var performance_test = function(scenarios, client_pool, describe) {
     var self = this;
     if(describe === undefined) {
         self.describe = 'performance_test';
@@ -11,7 +11,7 @@ var performance_test = function(describe, client_pool, scenarios) {
     else {
         self.describe = describe;
     }
-    if(client_pool === undefined){
+    if(client_pool === undefined) {
         self.client_pool = c_pool();//Create a default pool
     }
     else{
@@ -34,7 +34,7 @@ var performance_test = function(describe, client_pool, scenarios) {
                 results : []
             }
             var scenario_start_time = new Date();
-            self.scenarios[scenario_index].run(client_pool.getNextClient(), function(scenario_results) {
+            self.scenarios[scenario_index].run(self.client_pool.getNextClient(), function(scenario_results) {
                 for(var i = 0; i < scenario_results.length; i++) {
                     //extract all the response times
                     var request_times = get_scenario_request_times(scenario_results[i]);                                                        
@@ -57,7 +57,7 @@ var performance_test = function(describe, client_pool, scenarios) {
                     scenario_result.results.push(test_results);
                 }
                 performance_test_results.scenarios.push(scenario_result);
-                if(performance_test_results.scenarios.length === self.scenarios.length){
+                if(performance_test_results.scenarios.length === self.scenarios.length) {
                     cb(performance_test_results);
                 }
             });
@@ -98,6 +98,6 @@ function get_max_time_msec(request_times) {
     return Math.max.apply(null, request_times);
 }
 
-module.exports = function(describe, clients, scenarios) {
-    return new performance_test(describe, clients, scenarios);
+module.exports = function(scenarios, client_pool, describe) {
+    return new performance_test(scenarios, client_pool, describe);
 }

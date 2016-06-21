@@ -3,8 +3,55 @@ Node.js mocha friendly http performance scenario test API
 
 ## Code Example
 
+### request data
+requests are stored as simple objects that can return json that will work with the [request](https://www.npmjs.com/package/request)
+ module
 ```javascript
+var request = request_dto('GET','www.example.com','/index.html');
+request.get_request();
+```
+get_request will return
 
+```json
+{
+    method: 'GET',
+    uri: 'www.example.com/index.html',
+    qs: {},
+    headers: [],
+    body: ''
+}
+```
+### scenarios
+To combine requests in certain orders we add them to a scenario.
+```javascript
+var requests = [request_dto('GET','www.example.com','/login.html'),
+                request_dto('GET','www.example.com','/index.html'),
+                request_dto('GET','www.example.com','/logout.html')];
+var example_scenario = scenario(requests);
+```
+to run a single scenario you can just call the run function on it
+```javascript
+example_scenario.run( function(scenario_results) {
+    //e. g. using assert to test it
+    assert.equal(true,scenario_results.success);
+});
+```
+### performance_test example with default settings
+Here is a minimal setup to run a performance test with everything set to default(not recomended)
+```javascript
+var scenario_test = scenario([request_dto('GET','http://localhost:'+some_free_port)]);
+var performance_test = performance_test([scenario_test]);
+performance_test.run(
+    { 
+        max_mean_time_msec : 100,
+        max_median_time_msec : 100,
+        max_time_msec : 150 
+    },
+    function(test_result) {
+        assert.equal(true,test_result.success);
+        done();
+    }
+);
 
 ```
 Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
@@ -27,7 +74,7 @@ Available npm soon!
 
 ## API Reference
 
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+TODO
 
 ## Tests
 
@@ -39,7 +86,7 @@ npm test
 
 ## Contributors
 
-Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
+[![Mats Nilsson](https://avatars1.githubusercontent.com/u/6709044?v=3&s=460)](https://github.com/MatsN)
 
 ## License
 

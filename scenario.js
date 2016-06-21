@@ -2,6 +2,7 @@
 var Q = require('q');
 var request = require('request');
 var util = require('util');
+var client_ = require('./client.js');
 /**
 * Constructor for scenario
 * @private
@@ -11,10 +12,20 @@ var util = require('util');
 * @param {Object} requests
 * @return {Object} description
 */
-var scenario = function(name, description, requests) {
+var scenario = function(requests, name, description) {
     var self = this;
-    self.name = name;
-    self.description = description;
+    if(name === undefined) {
+        self.name = 'default_scenario';
+    }
+    else{
+        self.name = name;
+    }
+    if(description === undefined) {
+        self.description = 'A Sceanrio';
+    }
+    else{
+        self.description = description;
+    }
     self.requests = requests;
     /**
     * Run the scenario
@@ -25,6 +36,10 @@ var scenario = function(name, description, requests) {
     * @return {Object} description
     */
     self.run = function(client, cb) {
+        if(arguments.length === 1){
+            cb = client;
+            client = client_();
+        }
         var scenario_results = [];
         var attempts_done = 0;
         for(var attempts = 0; attempts < client.times_to_run; attempts++) {
@@ -130,6 +145,6 @@ function do_request(request_dto) {
     return deferred.promise;
 }
 
-module.exports = function (name, description, requests) {
-    return new scenario(name, description, requests);
+module.exports = function (requests, name, description) {
+    return new scenario(requests, name, description);
 }

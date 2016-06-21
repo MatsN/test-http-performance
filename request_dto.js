@@ -6,7 +6,13 @@ var request_dto = function(method, domain, path, queryParameters, body, headers,
     else{
         self.method = method;
     }
-    this.domain = domain;
+    if(domain === undefined){
+        self.domain ='http://localhost'
+    }
+    else{
+        self.domain = domain;
+    }
+
     if(path === undefined) {
         self.path = '/'; //default to empty path
     }

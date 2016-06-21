@@ -18,7 +18,7 @@ var requests = [
     request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
     request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false)
 ];
-var scenario_obj = scenario(name, describe_scenario, requests);
+var scenario_obj = scenario(requests, name, describe_scenario);
 var scenarios = [scenario_obj];
 
 var requirements = { 
@@ -33,10 +33,10 @@ var util = require('util');
 testserver.start(some_free_port);
 
 //create a performance_test to use below
-var perf_test = performance_test(describe_perf, client_pool_obj, scenarios);
-var performance_test_result=undefined;
+var perf_test = performance_test(scenarios, client_pool_obj, describe_perf);
+var performance_test_result = undefined;
 
-
+console.info(util.inspect(perf_test));
 
 //Run the test so whe can then do tests on the result
 
@@ -52,10 +52,26 @@ describe('performance_test', function () {
                 assert.equal(perf_test.scenarios,scenarios);
                 done();
             });
+            it('testing minimal setup with default constructor', function(done) {
+                var scenario_test = scenario([request_dto('GET','http://localhost:'+some_free_port)]);
+                var performance_t = performance_test([scenario_test]);
+                performance_t.run(
+                    { 
+                        max_mean_time_msec : 100,
+                        max_median_time_msec : 100,
+                        max_time_msec : 150 
+                    },
+                    function(test_result) {
+                        assert.equal(true,test_result.success);
+                        done();
+                    }
+                );
+            });
         });
         describe('run actual performance test', function() {
             it('run and wait for result',function(done){
-                perf_test.run(requirements, function(test_result) {
+                perf_test.run(requirements,
+                    function(test_result) {
                     performance_test_result = test_result;
                     done();
                 });
