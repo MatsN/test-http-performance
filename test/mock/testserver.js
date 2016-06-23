@@ -10,7 +10,6 @@ var server_handle = undefined;
 server.get('/', function(req,res,next) {
     res.status(200).send();
 });
-
 exports.start = function(port) {
     server_handle = server.listen(port);
 }

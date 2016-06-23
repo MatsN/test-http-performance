@@ -1,7 +1,5 @@
 var assert = require('assert');
-var request_dto = require('../request_dto.js');
-var scenario = require('../scenario.js');
-var client = require('../client.js');
+require('../bin/test-http-performance.js');
 //testserver to run scenarios agains.
 var testserver = require('./mock/testserver.js');
 //change this to a free port if you have something running on 8081!
@@ -17,8 +15,8 @@ describe('scenario', function () {
             var name ='test-senario';
             var description = 'test all requests';
             var requests = [
-                request_dto('GET','http://example.com','/test1', undefined,{},[],false),
-                request_dto('GET','http://example.com','/test2', undefined,{},[],false)
+                request_dto('GET','http://example.com','/test1', {},{},{},false),
+                request_dto('GET','http://example.com','/test2', {},{},{},false)
             ];
             var scenario_obj = scenario(requests, name, description);
             assert.equal(true, scenario_obj instanceof Object);
@@ -28,8 +26,8 @@ describe('scenario', function () {
             var name ='test-senario';
             var description = 'test all requests';
             var requests = [
-                request_dto('GET','http://example.com','/test1', undefined,{},[],false),
-                request_dto('GET','http://example.com','/test2', undefined,{},[],false)
+                request_dto('GET','http://example.com','/test1', {},{},{},false),
+                request_dto('GET','http://example.com','/test2', {},{},{},false)
             ];
             var scenario_obj = scenario(requests, name, description);
             assert.equal(scenario_obj.name, name);
@@ -44,24 +42,24 @@ describe('scenario', function () {
             var name = 'test-senario';
             var description = 'test all requests';
             var requests = [
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
             ];
             var scenario_obj = scenario(requests, name, description);
             var client1 = client('test-client1',{ 'testheader' : 'header_value'}, 1, 1000);
@@ -79,8 +77,8 @@ describe('scenario', function () {
             var name = 'test-senario';
             var description = 'test all requests';
             var requests = [
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false)
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false)
             ];
             var scenario_obj = scenario(requests, name, description);
             var client1 = client('test-client1',{ 'testheader' : 'header_value'},1, 1000);
@@ -96,12 +94,12 @@ describe('scenario', function () {
             var name = 'test-senario';
             var description = 'test all requests';
             var requests = [
-                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
+                request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
             ];
             var scenario_obj = scenario(requests, name, description);
             var client1 = client('test-client1',{ 'testheader' : 'blaj'}, 1, 1000);
-            var modded_request = scenario_obj.apply_client_specifics(requests[0],client1);
-            assert.equal(modded_request.headers['testheader'], client1.headers['testheader']);
+            scenario_obj.apply_client_specifics(requests[0],client1);
+            assert.equal(requests[0].headers['testheader'], client1.headers['testheader']);
             done();
         });
     });

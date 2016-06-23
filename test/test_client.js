@@ -1,10 +1,10 @@
 var assert = require('assert');
-var client = require('../client.js');
+var client = require('../lib/client.js');
 
 describe('client', function () {
     describe('Constructor', function () {
         it('should return a object',function(done) {
-            var testclient = require('../client.js')('testclient',{});
+            var testclient = client('testclient',{});
             assert.equal(true,testclient instanceof Object);
             done();
         });
@@ -13,7 +13,7 @@ describe('client', function () {
             var headers = { 'testheader': 'abc'};
             var times_to_run = 10;
             var msec_between_requests = 1000;
-            var testclient = require('../client.js')(name,headers,times_to_run,msec_between_requests);
+            var testclient = client(name,headers,times_to_run,msec_between_requests);
             assert.equal(testclient.name, name);
             assert.equal(testclient.headers, headers);
             assert.equal(testclient.times_to_run, times_to_run);

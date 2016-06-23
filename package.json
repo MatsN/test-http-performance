@@ -1,8 +1,8 @@
 {
   "name": "test-http-performance",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Node.js mocha friendly http performance scenario test API",
-  "main": "",
+  "main": "bin/test-http-performance.js",
   "dependencies": {
     "q": "^1.4.1",
     "request": "^2.72.0"
@@ -23,6 +23,13 @@
     "performance",
     "test",
     "http"
+  ],
+  "files": [
+    "bin",
+    "lib",
+    "test",
+    "README.md",
+    "LICENSE"
   ],
   "author": "Mats Nilsson",
   "license": "MIT"

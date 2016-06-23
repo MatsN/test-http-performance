@@ -1,9 +1,9 @@
 var assert = require('assert');
-var performance_test = require('../performance_test.js');
-var client = require('../client.js');
-var client_pool = require('../client_pool.js');
-var request_dto = require('../request_dto.js');
-var scenario = require('../scenario.js');
+var performance_test = require('../lib/performance_test.js');
+var client = require('../lib/client.js');
+var client_pool = require('../lib/client_pool.js');
+var request_dto = require('../lib/request_dto.js');
+var scenario = require('../lib/scenario.js');
 //testserver to run scenarios agains.
 var testserver = require('./mock/testserver.js');
 //change this to a free port if you have something running on 8081!
@@ -15,16 +15,16 @@ var client_pool_obj = client_pool('test_pool',[client('test_client1',[{ 'testhea
 var name = 'test-senario';
 var describe_scenario = 'test all requests';
 var requests = [
-    request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false),
-    request_dto('GET','http://localhost:'+some_free_port,'/', {},{},[],false)
+    request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
+    request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false)
 ];
 var scenario_obj = scenario(requests, name, describe_scenario);
 var scenarios = [scenario_obj];
 
 var requirements = { 
-    max_mean_time_msec : 100,
-    max_median_time_msec : 100,
-    max_time_msec : 150 
+    max_mean_time_msec : 200,
+    max_median_time_msec : 260,
+    max_time_msec : 300
 };
 
 
@@ -35,8 +35,6 @@ testserver.start(some_free_port);
 //create a performance_test to use below
 var perf_test = performance_test(scenarios, client_pool_obj, describe_perf);
 var performance_test_result = undefined;
-
-console.info(util.inspect(perf_test));
 
 //Run the test so whe can then do tests on the result
 
@@ -57,9 +55,9 @@ describe('performance_test', function () {
                 var performance_t = performance_test([scenario_test]);
                 performance_t.run(
                     { 
-                        max_mean_time_msec : 100,
-                        max_median_time_msec : 100,
-                        max_time_msec : 150 
+                        max_mean_time_msec : 200,
+                        max_median_time_msec : 260,
+                        max_time_msec : 300
                     },
                     function(test_result) {
                         assert.equal(true,test_result.success);

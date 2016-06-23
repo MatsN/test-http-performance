@@ -1,6 +1,6 @@
 var assert = require('assert');
-var client = require('../client.js');
-var client_pool = require('../client_pool.js');
+var client = require('../lib/client.js');
+var client_pool = require('../lib/client_pool.js');
 var util = require('util');
 
 
