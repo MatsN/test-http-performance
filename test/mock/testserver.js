@@ -8,6 +8,7 @@ var server_handle = undefined;
 
 // just say 200 ok on any request
 server.get('/', function(req,res,next) {
+    //console.log(req.headers['testheader']);
     res.status(200).send();
 });
 exports.start = function(port) {

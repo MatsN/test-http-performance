@@ -11,12 +11,12 @@ var some_free_port = 8082;
 
 //testdata
 var describe_perf = 'Performancetesting testserver';
-var client_pool_obj = client_pool('test_pool',[client('test_client1',[{ 'testheader': 'abc'}],500,10)], false);
+var client_pool_obj = client_pool('test_pool',[client('test_client1',{ 'testheader': 'abc'},100,30)], false);
 var name = 'test-senario';
 var describe_scenario = 'test all requests';
 var requests = [
     request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false),
-    request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false)
+    request_dto('GET','http://localhost:'+some_free_port,'/', {},{},{},false,20)
 ];
 var scenario_obj = scenario(requests, name, describe_scenario);
 var scenarios = [scenario_obj];
