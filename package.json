@@ -1,6 +1,6 @@
 {
   "name": "test-http-performance",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Node.js mocha friendly http performance scenario test API",
   "main": "bin/test-http-performance.js",
   "dependencies": {
