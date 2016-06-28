@@ -22,9 +22,9 @@ var scenario_obj = scenario(requests, name, describe_scenario);
 var scenarios = [scenario_obj];
 
 var requirements = { 
-    max_mean_time_msec : 200,
-    max_median_time_msec : 260,
-    max_time_msec : 300
+    max_mean_time_msec : 100,
+    max_median_time_msec : 120,
+    max_time_msec : 150
 };
 
 
@@ -54,17 +54,29 @@ describe('performance_test', function () {
                 var scenario_test = scenario([request_dto('GET','http://localhost:'+some_free_port)]);
                 var performance_t = performance_test([scenario_test]);
                 performance_t.run(
-                    { 
-                        max_mean_time_msec : 200,
-                        max_median_time_msec : 260,
-                        max_time_msec : 300
-                    },
+                    requirements,
                     function(test_result) {
-                        assert.equal(true,test_result.success);
-                        done();
+                        try{
+                            assert.equal(true,test_result.success);
+                            done();
+                        }
+                        catch(error) {
+                            done(error);
+                        }
                     }
                 );
             });
+        });
+        describe('testing statistic helper methods', function() {
+           it('testing get_median_time_msec with only one value',function(){
+               assert.equal(true, performance_test.get_median_time_msec([1]) !== undefined);
+           });
+           it('testing get_median_time_msec with odd number of values',function(){
+               assert.equal(3, performance_test.get_median_time_msec([3,1,5])); // sorted 1,3,5 gives 3 as median
+           });
+           it('testing get_median_time_msec with even number of values',function(){
+               assert.equal(2.5, performance_test.get_median_time_msec([1,2,3,5])); // two middle nr 2,3 gives (2+3)/2 = 2.5
+           }); 
         });
         describe('run actual performance test', function() {
             it('run and wait for result',function(done){
@@ -74,10 +86,18 @@ describe('performance_test', function () {
                     done();
                 });
             });
-            it('shuld return a performance_test_result', function(done){
+            it('should return a performance_test_result', function(done){
                 assert.equal(true, performance_test_result instanceof Object);
                 assert.equal(true, performance_test_result.describe === describe_perf);
                 done();
+            });
+            it('test should be successful', function() {
+                assert.equal(true, performance_test_result.success);
+            });
+            it('scenarios should be successful', function() {
+                performance_test_result.scenarios.forEach( function(scenario) {
+                    assert.equal(true, scenario.success);
+                });
             });
             it('the times of the scenario should pass the requirements', function(done) {
                 performance_test_result.scenarios.forEach( function(scenario) {
