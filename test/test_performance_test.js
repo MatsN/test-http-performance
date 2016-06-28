@@ -88,7 +88,7 @@ describe('performance_test', function () {
             });
             it('should return a performance_test_result', function(done){
                 assert.equal(true, performance_test_result instanceof Object);
-                assert.equal(true, performance_test_result.describe === describe_perf);
+                assert.equal(performance_test_result.describe,describe_perf);
                 done();
             });
             it('test should be successful', function() {
